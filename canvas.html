@@ -1,0 +1,251 @@
+<html>
+<head>
+	<title>Canvas Grid Demo</title>
+	<style type="text/css">
+		canvas { border: 1px solid black; }
+		.clear { clear: both; }
+		.heading { font-weight: bold;color: black !important; margin-top: 1em;  }
+		.pass { color: green; }
+		.fail { color: red; }
+	</style>
+	<script type="text/javascript" src="ab_grid.js"></script>
+	<script type="text/javascript">
+		function assert(outcome, message, extraClass) {
+			if (typeof output != 'object' || output.nodeType != 1) throw('No output target');
+			var li = document.createElement('li');
+			li.className = (outcome?'pass':'fail') + (extraClass?' ' + extraClass:'');
+			li.appendChild(document.createTextNode((outcome?'':'FAIL ') + message));
+			output.appendChild(li);
+		}
+		
+		function runTests(conditions, title) {
+			if (typeof conditions.before == 'function') conditions.before();
+			result = AB.grid(conditions.element, conditions.columns, conditions.gutter, conditions.style);
+			assert(true, title, 'heading');
+			
+			for (var i in conditions.tests) {
+				assert(eval(conditions.tests[i].e), conditions.tests[i].m);
+			}
+		}
+	</script>
+</head>
+<body>
+	<canvas id="tutorial" width="942"></canvas>
+	<div class="clear"></div>
+	<ol id="tests"></ol>
+	<script type="text/javascript">
+		var canvas = document.getElementById('tutorial');
+		var output = document.getElementById('tests');
+		
+		var unitTests = {
+			'TESTING || Internal': {
+				element: canvas.cloneNode(true),
+				columns: 1,
+				gutter: 1,
+				style: null,
+				tests: [
+					{
+					e:"false",
+					m:'Should fail'
+					},
+					{
+					e:"true",
+					m:'Should pass'
+					}
+				]
+			},
+			'TESTING || width: 940px, 16 columns, 20px gutter, default style': {
+				element: canvas.cloneNode(true),
+				before: function(el){this.element.width = 940;},
+				columns: 16,
+				gutter: 20,
+				style: null,
+				tests: [
+					{
+					e:"typeof result == 'object'",
+					m:'Returned an object'
+					},
+					{
+					e:"typeof result.element == 'object' && result.element.nodeName.toLowerCase() == 'canvas'",
+					m:'element property is a CANVAS element'
+					},
+					{
+					e:"result.cols === 16",
+					m:'cols property is equal to 16'
+					},
+					{
+					e:"result.gutter === 20",
+					m:'gutter property is integer 20'
+					},
+					{
+					e:"result.width === 40",
+					m:'width property is integer 40'
+					},
+					{
+					e:"result.offsets instanceof Array",
+					m:'offsets property is an array'
+					},
+					{
+					e:"result.offsets.length === result.cols",
+					m:'offsets array has a number of elements equal to the value of the cols property'
+					},
+					{
+					e:"result.offsets[0] === 0",
+					m:'first element of offsets array is integer 0'
+					},
+					{
+					e:"result.offsets[15] === 900",
+					m:'last element of offsets array is integer 900'
+					}
+				]
+			},
+			'TESTING || width: 830px, 12 columns, 10px gutter, default style': {
+				element: canvas.cloneNode(true),
+				before: function(el){this.element.width = 830;},
+				columns: 12,
+				gutter: 10,
+				style: null,
+				tests: [
+					{
+					e:"typeof result == 'object'",
+					m:'Returned an object'
+					},
+					{
+					e:"typeof result.element == 'object' && result.element.nodeName.toLowerCase() == 'canvas'",
+					m:'element property is a CANVAS element'
+					},
+					{
+					e:"result.cols === 12",
+					m:'cols property is equal to 12'
+					},
+					{
+					e:"result.gutter === 10",
+					m:'gutter property is integer 10'
+					},
+					{
+					e:"result.width === 60",
+					m:'width property is integer 60'
+					},
+					{
+					e:"result.offsets instanceof Array",
+					m:'offsets property is an array'
+					},
+					{
+					e:"result.offsets.length === result.cols",
+					m:'offsets array has a number of elements equal to the value of the cols property'
+					},
+					{
+					e:"result.offsets[0] === 0",
+					m:'first element of offsets array is integer 0'
+					},
+					{
+					e:"result.offsets[11] === 770",
+					m:'last element of offsets array is integer 770'
+					}
+				]
+			},
+			'TESTING || width: 830px (no element), 12 columns, 10px gutter, default style': {
+				element: 830,
+				columns: 12,
+				gutter: 10,
+				style: null,
+				tests: [
+					{
+					e:"typeof result == 'object'",
+					m:'Returned an object'
+					},
+					{
+					e:"result.element === null",
+					m:'element property is null'
+					},
+					{
+					e:"result.cols === 12",
+					m:'cols property is equal to 12'
+					},
+					{
+					e:"result.gutter === 10",
+					m:'gutter property is integer 10'
+					},
+					{
+					e:"result.width === 60",
+					m:'width property is integer 60'
+					},
+					{
+					e:"result.offsets instanceof Array",
+					m:'offsets property is an array'
+					},
+					{
+					e:"result.offsets.length === result.cols",
+					m:'offsets array has a number of elements equal to the value of the cols property'
+					},
+					{
+					e:"result.offsets[0] === 0",
+					m:'first element of offsets array is integer 0'
+					},
+					{
+					e:"result.offsets[11] === 770",
+					m:'last element of offsets array is integer 770'
+					}
+				]
+			},
+			'TESTING || width: 940px, 8 2x columns, 20px gutter, default style': {
+				element: canvas.cloneNode(true),
+				columns: [2,2,2,2,2,2,2,2],
+				gutter: 20,
+				style: null,
+				tests: [
+					{
+					e:"typeof result == 'object'",
+					m:'Returned an object'
+					},
+					{
+					e:"typeof result.element == 'object' && result.element.nodeName.toLowerCase() == 'canvas'",
+					m:'element property is a CANVAS element'
+					},
+					{
+					e:"result.cols === 8",
+					m:'cols property is equal to 8'
+					},
+					{
+					e:"result.gutter === 20",
+					m:'gutter property is integer 20'
+					},
+					{
+					e:"result.width === 50",
+					m:'width property is integer 50'
+					},
+					{
+					e:"result.offsets instanceof Array",
+					m:'offsets property is an array'
+					},
+					{
+					e:"result.offsets.length === result.cols",
+					m:'offsets array has a number of elements equal to the value of the cols property'
+					},
+					{
+					e:"result.offsets[0] === 0",
+					m:'first element of offsets array is integer 0'
+					},
+					{
+					e:"result.offsets[7] === 840",
+					m:'last element of offsets array is integer 840'
+					}
+				]
+			}
+		};
+		
+		for (var i in unitTests) {
+			runTests(unitTests[i], i);
+		}
+		
+		canvas.width = 940;
+		result = AB.grid(canvas, [1, 3, 1], 10);
+		
+		canvas.onclick = function(e) {
+			var img = document.createElement('img');
+			img.setAttribute('src', canvas.toDataURL());
+			document.getElementsByTagName('body')[0].appendChild(img);
+		}
+	</script>
+</body>
+</html>
